@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#635bff">
+  <title>Taskly - To-Do List</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <a href="#" class="logo" aria-label="Taskly home">
+        <span class="logo-icon">✓</span>
+        <span class="logo-text">taskly.</span>
+      </a>
+
+      <p class="sidebar-label">WORKSPACE</p>
+      <nav class="sidebar-nav" aria-label="Task views">
+        <button class="nav-item active" data-view="all">
+          <span>▦</span> All tasks <span class="nav-count" id="allCount">0</span>
+        </button>
+        <button class="nav-item" data-view="pending">
+          <span>◷</span> Pending <span class="nav-count" id="pendingCount">0</span>
+        </button>
+        <button class="nav-item" data-view="completed">
+          <span>✓</span> Completed <span class="nav-count" id="completedCount">0</span>
+        </button>
+      </nav>
+
+      <div class="category-heading">
+        <p class="sidebar-label">CATEGORIES</p>
+        <button id="addCategoryBtn" class="small-icon-btn" aria-label="Add category" title="Add category">+</button>
+      </div>
+      <div class="category-list" id="categoryList">
+        <button class="category-chip active" data-category="All">All</button>
+        <button class="category-chip" data-category="Work">Work</button>
+        <button class="category-chip" data-category="Personal">Personal</button>
+        <button class="category-chip" data-category="Study">Study</button>
+        <button class="category-chip" data-category="Health">Health</button>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="quote-card">
+          <span class="quote-star">✦</span>
+          <strong>Small steps, big wins.</strong>
+          <p>Make today count, one task at a time.</p>
+        </div>
+        <button id="themeToggle" class="theme-toggle">
+          <span id="themeIcon">☾</span>
+          <span id="themeLabel">Dark mode</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow" id="todayLabel">YOUR DAILY WORKSPACE</p>
+          <h1 id="greeting">My tasks<span class="heading-dot">.</span></h1>
+          <p class="page-subtitle">A little progress every day adds up.</p>
+        </div>
+        <button class="btn btn-primary" id="addTaskBtn">
+          <span>+</span> Add task
+        </button>
+      </header>
+
+      <section class="stats-grid" aria-label="Task statistics">
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-label">Total tasks</span><span class="stat-icon">▦</span></div>
+          <p class="stat-number" id="totalStat">0</p>
+          <p class="stat-description">All your tasks</p>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-label">Pending</span><span class="stat-icon orange">◷</span></div>
+          <p class="stat-number" id="pendingStat">0</p>
+          <p class="stat-description">Still to be done</p>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-label">Completed</span><span class="stat-icon green">✓</span></div>
+          <p class="stat-number" id="completedStat">0</p>
+          <p class="stat-description">Tasks finished</p>
+        </article>
+        <article class="stat-card">
+          <div class="stat-top"><span class="stat-label">Progress</span><span class="stat-icon pink">↗</span></div>
+          <p class="stat-number" id="progressStat">0%</p>
+          <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+        </article>
+      </section>
+
+      <section class="task-workspace">
+        <div class="toolbar">
+          <label class="search-container">
+            <span class="search-icon">⌕</span>
+            <input type="search" id="searchInput" placeholder="Search your tasks..." aria-label="Search tasks">
+          </label>
+          <div class="toolbar-actions">
+            <select id="priorityFilter" class="filter-select" aria-label="Filter by priority">
+              <option value="all">All priorities</option>
+              <option value="high">High priority</option>
+              <option value="medium">Medium priority</option>
+              <option value="low">Low priority</option>
+            </select>
+            <select id="sortSelect" class="filter-select" aria-label="Sort tasks">
+              <option value="newest">Recently added</option>
+              <option value="oldest">Oldest first</option>
+              <option value="dueDate">Due date</option>
+              <option value="priority">Priority</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title-wrap">
+            <h2 id="taskSectionTitle">All tasks</h2>
+            <span class="task-count" id="visibleCount">0</span>
+          </div>
+          <button class="text-button" id="clearCompletedBtn">Clear completed</button>
+        </div>
+
+        <div class="tasks-list" id="tasksList"></div>
+
+        <div class="empty-state" id="emptyState">
+          <div class="empty-illustration">✦</div>
+          <h3 id="emptyTitle">No tasks found</h3>
+          <p id="emptyMessage">Add a task to get your day moving.</p>
+          <button class="btn btn-primary" id="emptyAddBtn">+ Add your first task</button>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <p>Made for your everyday wins <span>♥</span> Taskly</p>
+        <p>Your tasks stay on this device.</p>
+      </footer>
+    </main>
+  </div>
+
+  <!-- Add/Edit Task Modal -->
+  <div class="modal-overlay" id="taskModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">YOUR WORKSPACE</p>
+          <h2 id="modalTitle">Create a task</h2>
+          <p class="modal-subtitle">Make a plan, then make it happen.</p>
+        </div>
+        <button class="modal-close" id="closeModalBtn" aria-label="Close dialog">×</button>
+      </div>
+
+      <form id="taskForm">
+        <div class="form-group">
+          <label for="taskTitle">Task title <span class="required">*</span></label>
+          <input class="form-control" id="taskTitle" name="title" type="text" placeholder="What do you need to do?" maxlength="120" required>
+        </div>
+
+        <div class="form-group">
+          <label for="taskDescription">Description <span class="optional">(optional)</span></label>
+          <textarea class="form-control" id="taskDescription" name="description" placeholder="Add some details..." rows="3" maxlength="500"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="taskCategory">Category</label>
+            <select class="form-control" id="taskCategory" name="category">
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Study">Study</option>
+              <option value="Health">Health</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="taskPriority">Priority</label>
+            <select class="form-control" id="taskPriority" name="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="taskDueDate">Due date <span class="optional">(optional)</span></label>
+          <input class="form-control" id="taskDueDate" name="dueDate" type="date">
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveTaskBtn">Save task</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div class="modal-overlay" id="categoryModal" hidden>
+    <section class="modal small-modal" role="dialog" aria-modal="true" aria-labelledby="categoryModalTitle">
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">ORGANIZE YOUR WORK</p>
+          <h2 id="categoryModalTitle">New category</h2>
+        </div>
+        <button class="modal-close" id="closeCategoryModalBtn" aria-label="Close dialog">×</button>
+      </div>
+      <form id="categoryForm">
+        <div class="form-group">
+          <label for="newCategoryName">Category name</label>
+          <input class="form-control" id="newCategoryName" type="text" maxlength="25" placeholder="e.g. Projects" required>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancelCategoryBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add category</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
